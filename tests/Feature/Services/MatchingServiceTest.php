@@ -49,8 +49,8 @@ class MatchingServiceTest extends TestCase
         $owner = User::factory()->create();
         $category = Category::factory()->forItems()->create();
 
-        $offer = Item::factory()->for($owner)->for($category)->create(['type' => ExchangeType::Offer]);
-        Item::factory()->for($owner)->for($category)->create(['type' => ExchangeType::Need]);
+        $offer = Item::factory()->for($owner, 'owner')->for($category)->create(['type' => ExchangeType::Offer]);
+        Item::factory()->for($owner, 'owner')->for($category)->create(['type' => ExchangeType::Need]);
 
         $owners = (new MatchingService)->findOwnersToNotify($offer);
 
