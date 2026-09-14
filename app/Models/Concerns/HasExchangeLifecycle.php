@@ -40,6 +40,21 @@ trait HasExchangeLifecycle
         return $this->belongsTo(Category::class);
     }
 
+    public function ownerId(): int
+    {
+        return $this->user_id;
+    }
+
+    public function categoryId(): int
+    {
+        return $this->category_id;
+    }
+
+    public function ownerUser(): User
+    {
+        return $this->owner;
+    }
+
     public function getExchangeType(): ExchangeType
     {
         return $this->type;
