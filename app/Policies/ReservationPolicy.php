@@ -14,7 +14,7 @@ class ReservationPolicy
     public function view(User $user, Reservation $reservation): bool
     {
         return $user->id === $reservation->requester_id
-            || $user->id === $reservation->reservable->user_id
+            || $user->id === $reservation->reservable->ownerId()
             || $user->isAdmin();
     }
 
@@ -30,7 +30,7 @@ class ReservationPolicy
     public function respond(User $user, Reservation $reservation): bool
     {
         return $reservation->isPending()
-            && ($user->id === $reservation->reservable->user_id || $user->isAdmin());
+            && ($user->id === $reservation->reservable->ownerId() || $user->isAdmin());
     }
 
     /**
@@ -40,7 +40,7 @@ class ReservationPolicy
     public function cancel(User $user, Reservation $reservation): bool
     {
         return $user->id === $reservation->requester_id
-            || $user->id === $reservation->reservable->user_id
+            || $user->id === $reservation->reservable->ownerId()
             || $user->isAdmin();
     }
 
@@ -49,6 +49,6 @@ class ReservationPolicy
      */
     public function complete(User $user, Reservation $reservation): bool
     {
-        return $user->id === $reservation->reservable->user_id || $user->isAdmin();
+        return $user->id === $reservation->reservable->ownerId() || $user->isAdmin();
     }
 }
