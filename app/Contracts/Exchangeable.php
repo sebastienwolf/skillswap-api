@@ -2,12 +2,12 @@
 
 namespace App\Contracts;
 
-use App\Builders\ExchangeableQueryBuilder;
 use App\Enums\ExchangeStatus;
 use App\Enums\ExchangeType;
 use App\Models\Category;
 use App\Models\Reservation;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -20,25 +20,22 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * connaître leur classe concrète (principe d'inversion de dépendance / D
  * de SOLID), et sans le moindre `instanceof` dispersé dans le code.
  *
- * Les annotations ci-dessous décrivent, pour l'analyse statique, les
- * colonnes et relations chargées dynamiquement par Eloquent (magic
- * properties) que tout Exchangeable expose réellement (voir Item/Skill).
- *
- * @property-read int $id
- * @property-read int $user_id
- * @property-read int $category_id
- * @property-read User $owner
- * @property-read Category $category
+ * Volontairement pas de propriétés magiques exposées ici (ex: $user_id,
+ * $category_id) : une interface n'étend pas Eloquent\Model, donc l'analyse
+ * statique ne peut pas garantir leur présence via un simple accès
+ * `$exchangeable->user_id`. On expose à la place des méthodes d'accès
+ * explicites (ownerId(), categoryId(), ownerUser()), aussi lisibles et
+ * réellement vérifiables.
  */
 interface Exchangeable
 {
     /**
-     * @return BelongsTo<User, $this>
+     * @return BelongsTo<User, Model>
      */
     public function owner(): BelongsTo;
 
     /**
-     * @return BelongsTo<Category, $this>
+     * @return BelongsTo<Category, Model>
      */
     public function category(): BelongsTo;
 
@@ -47,9 +44,25 @@ interface Exchangeable
      * Utilisé notamment par les Actions de réservation, qui manipulent
      * l'annonce concernée uniquement via ce contrat.
      *
-     * @return MorphMany<Reservation, $this>
+     * @return MorphMany<Reservation, Model>
      */
     public function reservations(): MorphMany;
+
+    /**
+     * Identifiant du propriétaire (colonne `user_id`).
+     */
+    public function ownerId(): int;
+
+    /**
+     * Identifiant de la catégorie (colonne `category_id`).
+     */
+    public function categoryId(): int;
+
+    /**
+     * Le propriétaire de cette ressource, déjà chargé (voir la relation
+     * `owner()` et son eager loading dans MatchingService).
+     */
+    public function ownerUser(): User;
 
     public function getExchangeType(): ExchangeType;
 
@@ -64,16 +77,6 @@ interface Exchangeable
     public function markAsArchived(): void;
 
     public function markAsPublished(): void;
-
-    /**
-     * Déclaré ici (et non simplement dans Item/Skill) pour que
-     * App\Services\MatchingService, qui manipule uniquement le type
-     * `Exchangeable&Model`, sache que les scopes de ExchangeableQueryBuilder
-     * (published(), byCategory(), ...) sont disponibles sur `newQuery()`.
-     *
-     * @return ExchangeableQueryBuilder<static>
-     */
-    public function newEloquentBuilder($query): ExchangeableQueryBuilder;
 
     /**
      * Libellé humainement lisible utilisé dans les notifications
