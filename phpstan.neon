@@ -1,0 +1,21 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - database
+        - routes
+
+    level: 6
+
+    excludePaths:
+        - app/Console/Kernel.php
+
+    ignoreErrors:
+        # Les Form Requests n'exposent pas de règle statique unique : le
+        # framework accepte string|array|Rule, ce que Larastan signale
+        # parfois à tort sur les tableaux de règles dynamiques.
+        - '#Method App\\Http\\Requests\\.*::rules\(\) return type has no value type specified in iterable type array#'
+
+    checkMissingIterableValueType: false

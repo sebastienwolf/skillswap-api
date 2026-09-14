@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\ReservationStatus;
+use Database\Factories\ReservationFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+/**
+ * Demande de réservation d'un membre (`requester`) sur un Item ou un Skill
+ * (`reservable`, relation polymorphique) appartenant à un autre membre.
+ *
+ * @use HasFactory<ReservationFactory>
+ */
+class Reservation extends Model
+{
+    /** @use HasFactory<ReservationFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'requester_id',
+        'reservable_type',
+        'reservable_id',
+        'status',
+        'message',
+        'scheduled_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => ReservationStatus::class,
+            'scheduled_at' => 'datetime',
+        ];
+    }
+
+    // Cf. commentaire dans App\Models\Item : valeur exprimée au format brut.
+    protected $attributes = [
+        'status' => ReservationStatus::Pending->value,
+    ];
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function requester(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requester_id');
+    }
+
+    /**
+     * L'Item ou le Skill concerné par cette réservation.
+     *
+     * @return MorphTo<\Illuminate\Database\Eloquent\Model, $this>
+     */
+    public function reservable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === ReservationStatus::Pending;
+    }
+}
