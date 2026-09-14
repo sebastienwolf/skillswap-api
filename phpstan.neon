@@ -9,9 +9,6 @@ parameters:
 
     level: 6
 
-    excludePaths:
-        - app/Console/Kernel.php
-
     ignoreErrors:
         # Les Form Requests n'exposent pas de règle statique unique : le
         # framework accepte string|array|Rule, ce que Larastan signale
