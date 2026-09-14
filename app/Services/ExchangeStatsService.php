@@ -38,7 +38,14 @@ class ExchangeStatsService
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>  $query
+     * Générique sur TModel : accepte aussi bien `Item::query()` que
+     * `Skill::query()`, sans avoir à connaître leur query builder
+     * personnalisé (le générique Builder<TModel> de base suffit ici,
+     * on ne se sert d'aucun scope propre à ExchangeableQueryBuilder).
+     *
+     * @template TModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<TModel>  $query
      * @return array<string, int>
      */
     private function countByStatus($query): array
