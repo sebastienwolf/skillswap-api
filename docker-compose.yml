@@ -1,0 +1,21 @@
+# Image autonome de l'API : `docker compose up` suffit à tout démarrer (build
+# de l'image, génération de la clé d'application, migrations et jeu de
+# données de démonstration), sans rien installer sur la machine hôte au
+# préalable. Voir Dockerfile et docker/entrypoint.sh pour le détail.
+#
+# Pour une stack plus proche d'une prod réelle (MySQL, Redis, Mailpit),
+# voir l'alternative Laravel Sail : docker-compose.sail.yml.
+services:
+    app:
+        build:
+            context: .
+        ports:
+            - '${APP_PORT:-8000}:8000'
+        volumes:
+            # La base SQLite est le seul état à faire persister : elle survit
+            # ainsi à un `docker compose down` / `up` sans perdre les données.
+            - skillswap-database:/var/www/html/database
+
+volumes:
+    skillswap-database:
+        driver: local
