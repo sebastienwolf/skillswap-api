@@ -22,7 +22,7 @@ class ReservationFlowTest extends TestCase
 
         $owner = User::factory()->create();
         $requester = User::factory()->create();
-        $item = Item::factory()->for($owner)->create(['type' => ExchangeType::Offer, 'status' => ExchangeStatus::Published]);
+        $item = Item::factory()->for($owner, 'owner')->create(['type' => ExchangeType::Offer, 'status' => ExchangeStatus::Published]);
 
         $response = $this->actingAs($requester, 'sanctum')->postJson('/api/reservations', [
             'reservable_type' => 'item',
@@ -38,7 +38,7 @@ class ReservationFlowTest extends TestCase
     public function a_member_cannot_reserve_their_own_item(): void
     {
         $owner = User::factory()->create();
-        $item = Item::factory()->for($owner)->create();
+        $item = Item::factory()->for($owner, 'owner')->create();
 
         $this->actingAs($owner, 'sanctum')->postJson('/api/reservations', [
             'reservable_type' => 'item',
@@ -50,7 +50,7 @@ class ReservationFlowTest extends TestCase
     public function accepting_a_reservation_locks_the_item_and_declines_other_requests(): void
     {
         $owner = User::factory()->create();
-        $item = Item::factory()->for($owner)->create(['status' => ExchangeStatus::Published]);
+        $item = Item::factory()->for($owner, 'owner')->create(['status' => ExchangeStatus::Published]);
         $firstRequester = User::factory()->create();
         $secondRequester = User::factory()->create();
 
@@ -71,7 +71,7 @@ class ReservationFlowTest extends TestCase
     {
         $owner = User::factory()->create();
         $requester = User::factory()->create();
-        $item = Item::factory()->for($owner)->create();
+        $item = Item::factory()->for($owner, 'owner')->create();
         $reservation = $item->reservations()->create(['requester_id' => $requester->id]);
 
         $this->actingAs($requester, 'sanctum')
@@ -84,7 +84,7 @@ class ReservationFlowTest extends TestCase
     {
         $owner = User::factory()->create();
         $requester = User::factory()->create();
-        $item = Item::factory()->for($owner)->create(['status' => ExchangeStatus::Reserved]);
+        $item = Item::factory()->for($owner, 'owner')->create(['status' => ExchangeStatus::Reserved]);
         $reservation = $item->reservations()->create([
             'requester_id' => $requester->id,
             'status' => \App\Enums\ReservationStatus::Accepted,
@@ -103,7 +103,7 @@ class ReservationFlowTest extends TestCase
     {
         $owner = User::factory()->create();
         $requester = User::factory()->create();
-        $item = Item::factory()->for($owner)->create(['status' => ExchangeStatus::Reserved]);
+        $item = Item::factory()->for($owner, 'owner')->create(['status' => ExchangeStatus::Reserved]);
         $reservation = $item->reservations()->create([
             'requester_id' => $requester->id,
             'status' => \App\Enums\ReservationStatus::Accepted,
