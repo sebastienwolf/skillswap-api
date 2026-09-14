@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * Une compétence proposée (offer) ou recherchée (need) par un membre.
  *
  * @use HasFactory<SkillFactory>
- * @mixin ExchangeableQueryBuilder
+ * @mixin ExchangeableQueryBuilder<Skill>
  */
 class Skill extends Model implements Exchangeable
 {
@@ -53,7 +53,10 @@ class Skill extends Model implements Exchangeable
      */
     public function newEloquentBuilder($query): ExchangeableQueryBuilder
     {
-        return new ExchangeableQueryBuilder($query);
+        /** @var ExchangeableQueryBuilder<static> $builder */
+        $builder = new ExchangeableQueryBuilder($query);
+
+        return $builder;
     }
 
     /**
