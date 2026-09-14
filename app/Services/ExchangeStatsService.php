@@ -8,6 +8,7 @@ use App\Models\Item;
 use App\Models\Reservation;
 use App\Models\Skill;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Agrège les indicateurs affichés sur le tableau de bord administrateur
@@ -45,7 +46,8 @@ class ExchangeStatsService
      *
      * @template TModel of \Illuminate\Database\Eloquent\Model
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<TModel>  $query
+     * @param  Builder<TModel>  $query
+     *
      * @return array<string, int>
      */
     private function countByStatus($query): array
