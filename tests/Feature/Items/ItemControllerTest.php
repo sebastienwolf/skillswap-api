@@ -61,7 +61,7 @@ class ItemControllerTest extends TestCase
     {
         $owner = User::factory()->create();
         $intruder = User::factory()->create();
-        $item = Item::factory()->for($owner)->create();
+        $item = Item::factory()->for($owner, 'owner')->create();
 
         $this->actingAs($intruder, 'sanctum')
             ->patchJson("/api/items/{$item->id}", ['title' => 'Piraté'])
@@ -78,7 +78,7 @@ class ItemControllerTest extends TestCase
     {
         $owner = User::factory()->create();
         $intruder = User::factory()->create();
-        $item = Item::factory()->for($owner)->create(['status' => ExchangeStatus::Published]);
+        $item = Item::factory()->for($owner, 'owner')->create(['status' => ExchangeStatus::Published]);
 
         $this->actingAs($intruder, 'sanctum')
             ->postJson("/api/items/{$item->id}/archive")
@@ -94,7 +94,7 @@ class ItemControllerTest extends TestCase
     public function a_member_can_filter_their_own_items_including_drafts(): void
     {
         $user = User::factory()->create();
-        Item::factory()->for($user)->create(['status' => ExchangeStatus::Archived]);
+        Item::factory()->for($user, 'owner')->create(['status' => ExchangeStatus::Archived]);
         Item::factory()->create(['status' => ExchangeStatus::Published]); // un autre membre
 
         $response = $this->actingAs($user, 'sanctum')->getJson('/api/items?mine=1');
