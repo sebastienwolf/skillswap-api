@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Contracts\Exchangeable;
 use App\Enums\ExchangeStatus;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as SupportCollection;
@@ -43,7 +44,7 @@ class MatchingService
     /**
      * Propriétaires distincts à notifier pour une nouvelle annonce publiée.
      *
-     * @return SupportCollection<int, \App\Models\User>
+     * @return SupportCollection<int, User>
      */
     public function findOwnersToNotify(Exchangeable&Model $exchangeable): SupportCollection
     {
