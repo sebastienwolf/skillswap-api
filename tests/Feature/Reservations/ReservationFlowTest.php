@@ -4,6 +4,7 @@ namespace Tests\Feature\Reservations;
 
 use App\Enums\ExchangeStatus;
 use App\Enums\ExchangeType;
+use App\Enums\ReservationStatus;
 use App\Models\Item;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -87,7 +88,7 @@ class ReservationFlowTest extends TestCase
         $item = Item::factory()->for($owner, 'owner')->create(['status' => ExchangeStatus::Reserved]);
         $reservation = $item->reservations()->create([
             'requester_id' => $requester->id,
-            'status' => \App\Enums\ReservationStatus::Accepted,
+            'status' => ReservationStatus::Accepted,
         ]);
 
         $this->actingAs($owner, 'sanctum')
@@ -106,7 +107,7 @@ class ReservationFlowTest extends TestCase
         $item = Item::factory()->for($owner, 'owner')->create(['status' => ExchangeStatus::Reserved]);
         $reservation = $item->reservations()->create([
             'requester_id' => $requester->id,
-            'status' => \App\Enums\ReservationStatus::Accepted,
+            'status' => ReservationStatus::Accepted,
         ]);
 
         $this->actingAs($requester, 'sanctum')
