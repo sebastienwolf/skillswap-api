@@ -22,6 +22,25 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        // Modifiables uniquement via UserController::update (Admin), qui est
+        // lui-même protégé par UserPolicy::update (admin uniquement, jamais
+        // sur soi-même) : aucun risque d'élévation de privilèges côté
+        // inscription publique, qui ne renseigne jamais ces deux champs.
+        'role',
+        'is_active',
+    ];
+
+    /**
+     * Valeurs par défaut alignées sur celles de la migration : sans cela,
+     * un modèle fraîchement créé en mémoire (avant tout rechargement depuis
+     * la base) exposerait `role` à `null` tant que la valeur par défaut SQL
+     * n'a pas été relue, ce qui casse le cast en enum dans UserResource.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'role' => UserRole::Member->value,
+        'is_active' => true,
     ];
 
     /**
