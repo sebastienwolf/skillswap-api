@@ -6,7 +6,7 @@ use App\Events\ExchangeablePublished;
 use App\Notifications\NewMatchFound;
 use App\Services\MatchingService;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Notification;
 
 /**
  * Traité en file d'attente : la recherche de correspondances et l'envoi de
