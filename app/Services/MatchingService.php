@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\Exchangeable;
+use App\Enums\ExchangeStatus;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as SupportCollection;
@@ -26,11 +27,15 @@ class MatchingService
      */
     public function findMatchesFor(Exchangeable&Model $exchangeable): Collection
     {
+        // Requête via des `where()` classiques plutôt que les scopes de
+        // ExchangeableQueryBuilder (published(), byCategory(), ...) : ce
+        // service ne connaît volontairement que le contrat Exchangeable,
+        // pas le query builder personnalisé d'Item/Skill.
         return $exchangeable->newQuery()
-            ->published()
-            ->ofType($exchangeable->getExchangeType()->opposite())
-            ->byCategory($exchangeable->category_id)
-            ->notOwnedBy($exchangeable->user_id)
+            ->where('status', ExchangeStatus::Published)
+            ->where('type', $exchangeable->getExchangeType()->opposite())
+            ->where('category_id', $exchangeable->categoryId())
+            ->where('user_id', '!=', $exchangeable->ownerId())
             ->with('owner')
             ->get();
     }
@@ -43,7 +48,7 @@ class MatchingService
     public function findOwnersToNotify(Exchangeable&Model $exchangeable): SupportCollection
     {
         return $this->findMatchesFor($exchangeable)
-            ->map(fn (Exchangeable&Model $match) => $match->owner)
+            ->map(fn (Exchangeable&Model $match) => $match->ownerUser())
             ->filter()
             ->unique('id')
             ->values();
