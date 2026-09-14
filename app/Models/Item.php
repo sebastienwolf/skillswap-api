@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * Un objet physique proposé (offer) ou recherché (need) par un membre.
  *
  * @use HasFactory<ItemFactory>
- * @mixin ExchangeableQueryBuilder
+ * @mixin ExchangeableQueryBuilder<Item>
  */
 class Item extends Model implements Exchangeable
 {
@@ -55,7 +55,10 @@ class Item extends Model implements Exchangeable
      */
     public function newEloquentBuilder($query): ExchangeableQueryBuilder
     {
-        return new ExchangeableQueryBuilder($query);
+        /** @var ExchangeableQueryBuilder<static> $builder */
+        $builder = new ExchangeableQueryBuilder($query);
+
+        return $builder;
     }
 
     /**
