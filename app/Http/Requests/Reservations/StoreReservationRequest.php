@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Reservations;
 
+use App\Models\Reservation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -9,7 +10,7 @@ class StoreReservationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('create', \App\Models\Reservation::class) ?? false;
+        return $this->user()?->can('create', Reservation::class) ?? false;
     }
 
     /**
