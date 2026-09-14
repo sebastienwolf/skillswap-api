@@ -34,14 +34,13 @@ class Skill extends Model implements Exchangeable
         'level',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'type' => ExchangeType::class,
-            'status' => ExchangeStatus::class,
-            'level' => SkillLevel::class,
-        ];
-    }
+    // Cf. commentaire dans App\Models\Item : syntaxe propriété plutôt que
+    // la méthode `casts()`, pour une inférence de type fiable par Larastan.
+    protected $casts = [
+        'type' => ExchangeType::class,
+        'status' => ExchangeStatus::class,
+        'level' => SkillLevel::class,
+    ];
 
     // Cf. commentaire dans App\Models\Item : valeurs exprimées au format brut.
     protected $attributes = [
@@ -49,6 +48,9 @@ class Skill extends Model implements Exchangeable
         'level' => SkillLevel::Beginner->value,
     ];
 
+    /**
+     * @return ExchangeableQueryBuilder<static>
+     */
     public function newEloquentBuilder($query): ExchangeableQueryBuilder
     {
         return new ExchangeableQueryBuilder($query);
