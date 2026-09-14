@@ -4,6 +4,7 @@ namespace App\Http\Requests\Items;
 
 use App\Enums\CategoryType;
 use App\Enums\ExchangeType;
+use App\Models\Item;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -11,7 +12,7 @@ class StoreItemRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('create', \App\Models\Item::class) ?? false;
+        return $this->user()?->can('create', Item::class) ?? false;
     }
 
     /**
