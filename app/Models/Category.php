@@ -23,12 +23,11 @@ class Category extends Model
         'type',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'type' => CategoryType::class,
-        ];
-    }
+    // Cf. commentaire dans App\Models\User : syntaxe propriété plutôt que
+    // la méthode `casts()`, pour une inférence de type fiable par Larastan.
+    protected $casts = [
+        'type' => CategoryType::class,
+    ];
 
     protected static function booted(): void
     {
