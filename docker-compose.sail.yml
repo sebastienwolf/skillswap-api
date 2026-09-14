@@ -1,6 +1,8 @@
-# Configuration Laravel Sail. Le projet tourne très bien sans Docker
-# (SQLite par défaut, voir le README), mais cet environnement est fourni
-# pour se rapprocher d'une stack de production (MySQL, Redis, Mailpit).
+# Configuration Laravel Sail : option alternative à `docker-compose.yml`
+# (l'image autonome, à la racine), pour qui veut une stack proche de la prod
+# (MySQL, Redis, Mailpit) plutôt qu'un unique conteneur SQLite. Nécessite un
+# `composer install` local préalable (voir README, section "Avec Docker").
+# Utilisation : docker compose -f docker-compose.sail.yml up -d
 services:
     laravel.test:
         build:
