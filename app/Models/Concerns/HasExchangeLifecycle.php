@@ -30,12 +30,17 @@ trait HasExchangeLifecycle
      * signature déclarée par App\Contracts\Exchangeable::owner() : les
      * génériques de BelongsTo ne sont pas covariants, `$this` (Item ou
      * Skill) ne serait donc pas accepté là où l'interface attend Model.
+     * `belongsTo()` infère cependant `$this` de lui-même : la variable
+     * annotée ci-dessous force explicitement le type large attendu.
      *
      * @return BelongsTo<User, Model>
      */
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        /** @var BelongsTo<User, Model> $relation */
+        $relation = $this->belongsTo(User::class, 'user_id');
+
+        return $relation;
     }
 
     /**
@@ -43,7 +48,10 @@ trait HasExchangeLifecycle
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        /** @var BelongsTo<Category, Model> $relation */
+        $relation = $this->belongsTo(Category::class);
+
+        return $relation;
     }
 
     public function ownerId(): int
