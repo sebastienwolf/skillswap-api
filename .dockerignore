@@ -1,0 +1,20 @@
+# Contexte de build allégé : ces fichiers n'ont rien à faire dans l'image
+# (dépendances déjà réinstallées par `composer install`, secrets locaux,
+# artefacts de qualité, historique git...).
+.git
+.github
+vendor
+node_modules
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+.phpunit.cache
+.phpstan.cache
+storage/logs/*.log
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+docker-compose.yml
+docker-compose.sail.yml
+README.md
