@@ -5,6 +5,7 @@ namespace App\Builders;
 use App\Enums\ExchangeStatus;
 use App\Enums\ExchangeType;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Query builder Eloquent personnalisé, partagé par Item et Skill
@@ -14,7 +15,13 @@ use Illuminate\Database\Eloquent\Builder;
  * `where` dans les deux modèles, et rend les requêtes des contrôleurs
  * lisibles : `Item::query()->published()->byCategory($id)->paginate()`.
  *
- * @extends Builder<\Illuminate\Database\Eloquent\Model>
+ * Générique sur le modèle concret (TModelClass) plutôt que fixé sur
+ * `Model` : sans ça, `Item::query()->get()` perdrait son type précis pour
+ * l'analyse statique et remonterait une simple Collection<Model>.
+ *
+ * @template TModelClass of Model
+ *
+ * @extends Builder<TModelClass>
  */
 class ExchangeableQueryBuilder extends Builder
 {
