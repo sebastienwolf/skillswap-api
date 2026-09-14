@@ -17,7 +17,7 @@ class RequestReservationAction
 {
     public function __invoke(Exchangeable&Model $exchangeable, User $requester, ?string $message = null): Reservation
     {
-        if ($exchangeable->user_id === $requester->id) {
+        if ($exchangeable->ownerId() === $requester->id) {
             throw ValidationException::withMessages([
                 'reservable' => 'Vous ne pouvez pas réserver votre propre annonce.',
             ]);
