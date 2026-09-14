@@ -10,7 +10,7 @@ class NotifyReservationRequested implements ShouldQueue
 {
     public function handle(ReservationRequested $event): void
     {
-        $event->reservation->reservable->owner
+        $event->reservation->reservable->ownerUser()
             ->notify(new ReservationRequestedNotification($event->reservation));
     }
 }
