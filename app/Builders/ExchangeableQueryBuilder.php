@@ -25,31 +25,49 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ExchangeableQueryBuilder extends Builder
 {
+    /**
+     * @return self<TModelClass>
+     */
     public function published(): self
     {
         return $this->where('status', ExchangeStatus::Published);
     }
 
+    /**
+     * @return self<TModelClass>
+     */
     public function ofType(ExchangeType $type): self
     {
         return $this->where('type', $type);
     }
 
+    /**
+     * @return self<TModelClass>
+     */
     public function byCategory(int $categoryId): self
     {
         return $this->where('category_id', $categoryId);
     }
 
+    /**
+     * @return self<TModelClass>
+     */
     public function ownedBy(int $userId): self
     {
         return $this->where('user_id', $userId);
     }
 
+    /**
+     * @return self<TModelClass>
+     */
     public function notOwnedBy(int $userId): self
     {
         return $this->where('user_id', '!=', $userId);
     }
 
+    /**
+     * @return self<TModelClass>
+     */
     public function search(?string $term): self
     {
         if (blank($term)) {
