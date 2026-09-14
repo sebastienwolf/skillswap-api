@@ -37,6 +37,14 @@ RUN composer install \
 
 COPY . .
 
+# Filet de sécurité en plus de .dockerignore : si un cache Laravel généré
+# localement (ex : bootstrap/cache/packages.php référençant des paquets de
+# dev comme laravel/pail, absents ici puisqu'installés avec --no-dev) se
+# retrouvait quand même dans le contexte de build, l'image ne doit jamais le
+# reprendre tel quel. Laravel régénère ces caches lui-même au premier appel
+# artisan si besoin (voir docker/entrypoint.sh).
+RUN rm -f bootstrap/cache/*.php
+
 # Fichier d'environnement et base SQLite : générés une seule fois, à la
 # construction de l'image ; le script d'entrée (voir docker/entrypoint.sh)
 # se charge de la clé d'application et des migrations au démarrage du
