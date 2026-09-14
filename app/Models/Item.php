@@ -70,7 +70,10 @@ class Item extends Model implements Exchangeable
      */
     public function reservations(): MorphMany
     {
-        return $this->morphMany(Reservation::class, 'reservable');
+        /** @var MorphMany<Reservation, Model> $relation */
+        $relation = $this->morphMany(Reservation::class, 'reservable');
+
+        return $relation;
     }
 
     public function displayLabel(): string
