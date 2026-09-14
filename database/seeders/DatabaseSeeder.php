@@ -53,6 +53,6 @@ class DatabaseSeeder extends Seeder
             $requestReservation($availableItem, $requester, 'Toujours disponible ?');
         }
 
-        $this->command?->info("Créé : 1 admin ({$admin->email} / password), {$members->count()} membres, {$items->count()} objets, {$skills->count()} compétences.");
+        $this->command->info("Créé : 1 admin ({$admin->email} / password), {$members->count()} membres, {$items->count()} objets, {$skills->count()} compétences.");
     }
 }
