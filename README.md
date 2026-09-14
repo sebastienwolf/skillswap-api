@@ -35,7 +35,7 @@ L'objectif n'est pas de couvrir un maximum de fonctionnalités, mais de montrer 
 | Base de données (dev/CI) | SQLite — zéro configuration pour lancer le projet |
 | Tests | PHPUnit 11 (tests unitaires + tests fonctionnels HTTP) |
 | Qualité | Laravel Pint (style PSR-12) + Larastan/PHPStan niveau 6 |
-| Conteneurisation | Laravel Sail (Docker, optionnel) |
+| Conteneurisation | Image Docker autonome (`docker compose up`) ; Laravel Sail en alternative |
 | CI | GitHub Actions (Pint + PHPStan + PHPUnit à chaque push/PR) |
 
 ### Architecture et choix de conception
@@ -85,14 +85,26 @@ php artisan serve
 
 L'API est alors disponible sur `http://localhost:8000/api`. Le seeder crée un administrateur (`admin@skillswap.test` / `password`), plusieurs membres, des catégories, des objets et des compétences de démonstration.
 
-### Avec Docker (Laravel Sail)
+### Avec Docker
+
+Rien à installer sur la machine hôte : l'image embarque directement les dépendances Composer, et le conteneur se charge lui-même de la clé d'application et des migrations à son premier démarrage.
+
+```bash
+docker compose up
+```
+
+L'API est alors disponible sur `http://localhost:8000/api` (le port se change via `APP_PORT` dans un fichier `.env` à la racine). Les données SQLite sont conservées dans un volume Docker nommé : un `docker compose down` suivi d'un `up` ne perd donc pas les données déjà créées.
+
+> ⚠️ Les logs affichent `Server running on [http://0.0.0.0:8000]` : `0.0.0.0` signifie que le serveur écoute sur toutes les interfaces *à l'intérieur du conteneur*, ce n'est pas une adresse à laquelle se connecter depuis le navigateur (elle renverrait une erreur `ERR_ADDRESS_INVALID`). Utilisez bien `http://localhost:8000/api`. Il n'y a par ailleurs aucune route sur `/` : c'est une API, pas un site web, donc une 404 sur `http://localhost:8000/` seul est normale — testez par exemple `http://localhost:8000/api/items`.
+
+Pour une stack plus proche d'une production réelle (MySQL, Redis, Mailpit en services séparés), l'alternative Laravel Sail reste disponible :
 
 ```bash
 composer install
 cp .env.example .env
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan key:generate
-./vendor/bin/sail artisan migrate --seed
+docker compose -f docker-compose.sail.yml up -d
+docker compose -f docker-compose.sail.yml exec laravel.test php artisan key:generate
+docker compose -f docker-compose.sail.yml exec laravel.test php artisan migrate --seed
 ```
 
 ### Qualité et tests
@@ -168,7 +180,7 @@ The goal isn't to cover as many features as possible, but to demonstrate, on a d
 | Database (dev/CI) | SQLite — zero configuration to run the project |
 | Tests | PHPUnit 11 (unit tests + HTTP feature tests) |
 | Quality | Laravel Pint (PSR-12 style) + Larastan/PHPStan level 6 |
-| Containerization | Laravel Sail (Docker, optional) |
+| Containerization | Standalone Docker image (`docker compose up`); Laravel Sail as an alternative |
 | CI | GitHub Actions (Pint + PHPStan + PHPUnit on every push/PR) |
 
 ### Architecture and design choices
@@ -218,14 +230,26 @@ php artisan serve
 
 The API is then available at `http://localhost:8000/api`. The seeder creates an administrator (`admin@skillswap.test` / `password`), several members, categories, and demo items and skills.
 
-### With Docker (Laravel Sail)
+### With Docker
+
+Nothing to install on the host machine: the image bundles the Composer dependencies directly, and the container handles the application key and migrations itself on first startup.
+
+```bash
+docker compose up
+```
+
+The API is then available at `http://localhost:8000/api` (the port is configurable via `APP_PORT` in a root `.env` file). SQLite data is kept in a named Docker volume, so a `docker compose down` followed by `up` does not lose data already created.
+
+> ⚠️ The logs show `Server running on [http://0.0.0.0:8000]`: `0.0.0.0` means the server listens on every interface *inside the container*, it is not an address you can open in a browser (it would raise an `ERR_ADDRESS_INVALID` error). Use `http://localhost:8000/api` instead. There is also no route on `/`: this is an API, not a website, so a 404 on `http://localhost:8000/` alone is expected — try `http://localhost:8000/api/items` instead.
+
+For a stack closer to a real production setup (MySQL, Redis, Mailpit as separate services), the Laravel Sail alternative is still available:
 
 ```bash
 composer install
 cp .env.example .env
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan key:generate
-./vendor/bin/sail artisan migrate --seed
+docker compose -f docker-compose.sail.yml up -d
+docker compose -f docker-compose.sail.yml exec laravel.test php artisan key:generate
+docker compose -f docker-compose.sail.yml exec laravel.test php artisan migrate --seed
 ```
 
 ### Quality and tests
