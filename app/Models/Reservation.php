@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\Exchangeable;
 use App\Enums\ReservationStatus;
 use Database\Factories\ReservationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -55,14 +56,14 @@ class Reservation extends Model
      * statique connaisse les méthodes du cycle de vie (markAsReserved,
      * reservations, ...) accessibles sur cette relation polymorphique.
      *
-     * @return MorphTo<\App\Contracts\Exchangeable&\Illuminate\Database\Eloquent\Model, $this>
+     * @return MorphTo<Exchangeable&Model, $this>
      */
     public function reservable(): MorphTo
     {
         // `morphTo()` ne peut pas connaître statiquement la classe cible
         // (Item ou Skill) : on précise le type via ce commentaire pour que
         // l'analyse statique le sache, conformément au type déclaré ci-dessus.
-        /** @var MorphTo<\App\Contracts\Exchangeable&\Illuminate\Database\Eloquent\Model, $this> $relation */
+        /** @var MorphTo<Exchangeable&Model, $this> $relation */
         $relation = $this->morphTo();
 
         return $relation;
