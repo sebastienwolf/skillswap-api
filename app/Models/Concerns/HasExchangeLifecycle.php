@@ -6,6 +6,7 @@ use App\Enums\ExchangeStatus;
 use App\Enums\ExchangeType;
 use App\Models\Category;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use RuntimeException;
 
@@ -25,7 +26,12 @@ use RuntimeException;
 trait HasExchangeLifecycle
 {
     /**
-     * @return BelongsTo<User, $this>
+     * Typé sur Model (et non $this) pour rester compatible avec la
+     * signature déclarée par App\Contracts\Exchangeable::owner() : les
+     * génériques de BelongsTo ne sont pas covariants, `$this` (Item ou
+     * Skill) ne serait donc pas accepté là où l'interface attend Model.
+     *
+     * @return BelongsTo<User, Model>
      */
     public function owner(): BelongsTo
     {
@@ -33,7 +39,7 @@ trait HasExchangeLifecycle
     }
 
     /**
-     * @return BelongsTo<Category, $this>
+     * @return BelongsTo<Category, Model>
      */
     public function category(): BelongsTo
     {
