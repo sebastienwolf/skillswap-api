@@ -62,7 +62,11 @@ class Item extends Model implements Exchangeable
     }
 
     /**
-     * @return MorphMany<Reservation, $this>
+     * Typé sur Model (et non $this) : cf. commentaire équivalent dans
+     * App\Models\Concerns\HasExchangeLifecycle (compatibilité avec
+     * App\Contracts\Exchangeable::reservations(), génériques non covariants).
+     *
+     * @return MorphMany<Reservation, Model>
      */
     public function reservations(): MorphMany
     {
