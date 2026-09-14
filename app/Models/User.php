@@ -52,17 +52,20 @@ class User extends Authenticatable
     ];
 
     /**
-     * @return array<string, string>
+     * On utilise ici la syntaxe historique (propriété) plutôt que la méthode
+     * `casts()` introduite par Laravel 11 : Larastan n'infère pas encore de
+     * façon fiable le type des enums castés via cette dernière, ce qui fait
+     * apparaître de faux positifs en analyse statique (ex: `$user->role`
+     * resterait typé `string` au lieu de `UserRole`).
+     *
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => UserRole::class,
-            'is_active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'role' => UserRole::class,
+        'is_active' => 'boolean',
+    ];
 
     public function isAdmin(): bool
     {
