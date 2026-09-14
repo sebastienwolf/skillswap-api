@@ -33,14 +33,14 @@ class Item extends Model implements Exchangeable
         'quantity',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'type' => ExchangeType::class,
-            'status' => ExchangeStatus::class,
-            'quantity' => 'integer',
-        ];
-    }
+    // Syntaxe propriété plutôt que la méthode `casts()` (Laravel 11) : voir
+    // le commentaire équivalent dans App\Models\User pour la justification
+    // (fiabilité de l'inférence de type des enums par Larastan).
+    protected $casts = [
+        'type' => ExchangeType::class,
+        'status' => ExchangeStatus::class,
+        'quantity' => 'integer',
+    ];
 
     // Valeurs par défaut exprimées dans leur format "brut" de stockage
     // (et non l'instance d'enum) : ce tableau alimente directement les
@@ -50,6 +50,9 @@ class Item extends Model implements Exchangeable
         'quantity' => 1,
     ];
 
+    /**
+     * @return ExchangeableQueryBuilder<static>
+     */
     public function newEloquentBuilder($query): ExchangeableQueryBuilder
     {
         return new ExchangeableQueryBuilder($query);
