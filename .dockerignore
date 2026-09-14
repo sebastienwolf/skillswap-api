@@ -11,6 +11,13 @@ node_modules
 .phpunit.result.cache
 .phpunit.cache
 .phpstan.cache
+# Caches Laravel générés localement (ex : manifeste des providers, incluant
+# ceux des paquets de dev comme laravel/pail). Absents de l'image de toute
+# façon puisqu'ils sont hors du suivi Git, mais Docker ne respecte pas
+# .gitignore : sans cette ligne, `COPY . .` les copierait tels quels si un
+# `composer install` complet a déjà tourné sur la machine hôte, et l'image
+# échouerait à démarrer (classe d'un paquet de dev absente du conteneur).
+bootstrap/cache/*.php
 storage/logs/*.log
 storage/framework/cache/data/*
 storage/framework/sessions/*
