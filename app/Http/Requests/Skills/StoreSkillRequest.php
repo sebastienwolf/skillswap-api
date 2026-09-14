@@ -5,6 +5,7 @@ namespace App\Http\Requests\Skills;
 use App\Enums\CategoryType;
 use App\Enums\ExchangeType;
 use App\Enums\SkillLevel;
+use App\Models\Skill;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,7 +13,7 @@ class StoreSkillRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('create', \App\Models\Skill::class) ?? false;
+        return $this->user()?->can('create', Skill::class) ?? false;
     }
 
     /**
