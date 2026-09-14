@@ -95,6 +95,8 @@ docker compose up
 
 L'API est alors disponible sur `http://localhost:8000/api` (le port se change via `APP_PORT` dans un fichier `.env` à la racine). Les données SQLite sont conservées dans un volume Docker nommé : un `docker compose down` suivi d'un `up` ne perd donc pas les données déjà créées.
 
+> ⚠️ Les logs affichent `Server running on [http://0.0.0.0:8000]` : `0.0.0.0` signifie que le serveur écoute sur toutes les interfaces *à l'intérieur du conteneur*, ce n'est pas une adresse à laquelle se connecter depuis le navigateur (elle renverrait une erreur `ERR_ADDRESS_INVALID`). Utilisez bien `http://localhost:8000/api`. Il n'y a par ailleurs aucune route sur `/` : c'est une API, pas un site web, donc une 404 sur `http://localhost:8000/` seul est normale — testez par exemple `http://localhost:8000/api/items`.
+
 Pour une stack plus proche d'une production réelle (MySQL, Redis, Mailpit en services séparés), l'alternative Laravel Sail reste disponible :
 
 ```bash
@@ -237,6 +239,8 @@ docker compose up
 ```
 
 The API is then available at `http://localhost:8000/api` (the port is configurable via `APP_PORT` in a root `.env` file). SQLite data is kept in a named Docker volume, so a `docker compose down` followed by `up` does not lose data already created.
+
+> ⚠️ The logs show `Server running on [http://0.0.0.0:8000]`: `0.0.0.0` means the server listens on every interface *inside the container*, it is not an address you can open in a browser (it would raise an `ERR_ADDRESS_INVALID` error). Use `http://localhost:8000/api` instead. There is also no route on `/`: this is an API, not a website, so a 404 on `http://localhost:8000/` alone is expected — try `http://localhost:8000/api/items` instead.
 
 For a stack closer to a real production setup (MySQL, Redis, Mailpit as separate services), the Laravel Sail alternative is still available:
 
