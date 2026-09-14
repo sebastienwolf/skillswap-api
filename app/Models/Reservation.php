@@ -29,13 +29,12 @@ class Reservation extends Model
         'scheduled_at',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'status' => ReservationStatus::class,
-            'scheduled_at' => 'datetime',
-        ];
-    }
+    // Cf. commentaire dans App\Models\User : syntaxe propriété plutôt que
+    // la méthode `casts()`, pour une inférence de type fiable par Larastan.
+    protected $casts = [
+        'status' => ReservationStatus::class,
+        'scheduled_at' => 'datetime',
+    ];
 
     // Cf. commentaire dans App\Models\Item : valeur exprimée au format brut.
     protected $attributes = [
@@ -51,9 +50,12 @@ class Reservation extends Model
     }
 
     /**
-     * L'Item ou le Skill concerné par cette réservation.
+     * L'Item ou le Skill concerné par cette réservation. Typé via le
+     * contrat Exchangeable (plutôt que Model brut) pour que l'analyse
+     * statique connaisse les méthodes du cycle de vie (markAsReserved,
+     * reservations, ...) accessibles sur cette relation polymorphique.
      *
-     * @return MorphTo<\Illuminate\Database\Eloquent\Model, $this>
+     * @return MorphTo<\App\Contracts\Exchangeable&\Illuminate\Database\Eloquent\Model, $this>
      */
     public function reservable(): MorphTo
     {
