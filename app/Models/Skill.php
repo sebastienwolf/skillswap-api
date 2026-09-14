@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * Une compétence proposée (offer) ou recherchée (need) par un membre.
  *
  * @use HasFactory<SkillFactory>
+ *
  * @mixin ExchangeableQueryBuilder<Skill>
  */
 class Skill extends Model implements Exchangeable
