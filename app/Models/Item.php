@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * Un objet physique proposé (offer) ou recherché (need) par un membre.
  *
  * @use HasFactory<ItemFactory>
+ *
  * @mixin ExchangeableQueryBuilder<Item>
  */
 class Item extends Model implements Exchangeable
