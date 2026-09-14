@@ -59,7 +59,7 @@ class SkillControllerTest extends TestCase
     {
         $owner = User::factory()->create();
         $intruder = User::factory()->create();
-        $skill = Skill::factory()->for($owner)->create();
+        $skill = Skill::factory()->for($owner, 'owner')->create();
 
         $this->actingAs($intruder, 'sanctum')
             ->deleteJson("/api/skills/{$skill->id}")
