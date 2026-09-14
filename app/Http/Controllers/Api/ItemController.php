@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\ArchiveExchangeableAction;
 use App\Actions\PublishExchangeableAction;
-use App\Enums\ExchangeType;
+use App\Filters\ExchangeableFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Items\StoreItemRequest;
 use App\Http\Requests\Items\UpdateItemRequest;
@@ -24,19 +24,7 @@ class ItemController extends Controller
     {
         $query = Item::query()->with(['category', 'owner']);
 
-        if ($request->boolean('mine') && $request->user()) {
-            $query->ownedBy($request->user()->id);
-        } else {
-            $query->published();
-        }
-
-        if ($type = $request->query('type')) {
-            $query->ofType(ExchangeType::from($type));
-        }
-
-        if ($categoryId = $request->query('category_id')) {
-            $query->byCategory((int) $categoryId);
-        }
+        ExchangeableFilters::fromRequest($request)->apply($query);
 
         $items = $query->search($request->query('q'))
             ->latest()
