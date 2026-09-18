@@ -17,8 +17,10 @@ use Illuminate\Http\Response;
 class ItemController extends Controller
 {
     /**
-     * Catalogue public des objets publiés. Un membre connecté peut filtrer
-     * ses propres annonces (y compris non publiées) via `?mine=1`.
+     * Catalogue des objets. Utilisée par deux routes distinctes (voir
+     * routes/api.php) : `GET /items` (publique, catalogue publié) et
+     * `GET /me/items` (authentifiée, via `?mine=1` : propres annonces du
+     * membre connecté, y compris non publiées).
      */
     public function index(Request $request): AnonymousResourceCollection
     {

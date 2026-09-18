@@ -40,6 +40,15 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);
 
+    // Mêmes méthodes `index()` que les routes publiques ci-dessus (le filtre
+    // `mine` géré par ExchangeableFilters ne change pas), mais protégées par
+    // `auth:sanctum` : contrairement à `/items?mine=1`, l'authentification
+    // est ici garantie avant d'exécuter le contrôleur (401 propre si le
+    // token est absent/invalide), plutôt que de dépendre silencieusement
+    // d'une résolution d'utilisateur optionnelle sur une route publique.
+    Route::get('/me/items', [ItemController::class, 'index']);
+    Route::get('/me/skills', [SkillController::class, 'index']);
+
     Route::post('/items', [ItemController::class, 'store']);
     Route::patch('/items/{item}', [ItemController::class, 'update']);
     Route::delete('/items/{item}', [ItemController::class, 'destroy']);

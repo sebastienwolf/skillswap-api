@@ -36,7 +36,12 @@ class ReservationController extends Controller
 
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Reservation::query()->with(['requester', 'reservable']);
+        // `reservable.owner` (et pas seulement `reservable`) : ItemResource/
+        // SkillResource exposent `owner` via `whenLoaded('owner')` — sans ce
+        // chargement imbriqué, la clé `owner` disparaît purement et
+        // simplement du JSON (elle n'est pas `null`, elle est absente), ce
+        // qui fait planter le frontend là où `reservable.owner.id` est lu.
+        $query = Reservation::query()->with(['requester', 'reservable.owner']);
 
         if ($request->query('scope') === 'received') {
             // Réservations reçues sur mes propres annonces : impossible à
@@ -68,41 +73,41 @@ class ReservationController extends Controller
 
         $reservation = $action($exchangeable, $request->user(), $request->validated('message'));
 
-        return new ReservationResource($reservation->load(['requester', 'reservable']));
+        return new ReservationResource($reservation->load(['requester', 'reservable.owner']));
     }
 
     public function show(Reservation $reservation): ReservationResource
     {
         $this->authorize('view', $reservation);
 
-        return new ReservationResource($reservation->load(['requester', 'reservable']));
+        return new ReservationResource($reservation->load(['requester', 'reservable.owner']));
     }
 
     public function accept(Reservation $reservation, AcceptReservationAction $action): ReservationResource
     {
         $this->authorize('respond', $reservation);
 
-        return new ReservationResource($action($reservation)->load(['requester', 'reservable']));
+        return new ReservationResource($action($reservation)->load(['requester', 'reservable.owner']));
     }
 
     public function decline(Reservation $reservation, DeclineReservationAction $action): ReservationResource
     {
         $this->authorize('respond', $reservation);
 
-        return new ReservationResource($action($reservation)->load(['requester', 'reservable']));
+        return new ReservationResource($action($reservation)->load(['requester', 'reservable.owner']));
     }
 
     public function cancel(Reservation $reservation, CancelReservationAction $action): ReservationResource
     {
         $this->authorize('cancel', $reservation);
 
-        return new ReservationResource($action($reservation)->load(['requester', 'reservable']));
+        return new ReservationResource($action($reservation)->load(['requester', 'reservable.owner']));
     }
 
     public function complete(Reservation $reservation, CompleteReservationAction $action): ReservationResource
     {
         $this->authorize('complete', $reservation);
 
-        return new ReservationResource($action($reservation)->load(['requester', 'reservable']));
+        return new ReservationResource($action($reservation)->load(['requester', 'reservable.owner']));
     }
 }

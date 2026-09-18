@@ -16,6 +16,12 @@ use Illuminate\Http\Response;
 
 class SkillController extends Controller
 {
+    /**
+     * Catalogue des compétences. Utilisée par deux routes distinctes (voir
+     * routes/api.php) : `GET /skills` (publique, catalogue publié) et
+     * `GET /me/skills` (authentifiée, via `?mine=1` : propres annonces du
+     * membre connecté, y compris non publiées).
+     */
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = Skill::query()->with(['category', 'owner']);
