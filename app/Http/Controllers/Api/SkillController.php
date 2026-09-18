@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\ArchiveExchangeableAction;
 use App\Actions\PublishExchangeableAction;
-use App\Enums\ExchangeType;
+use App\Filters\ExchangeableFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Skills\StoreSkillRequest;
 use App\Http\Requests\Skills\UpdateSkillRequest;
@@ -26,19 +26,7 @@ class SkillController extends Controller
     {
         $query = Skill::query()->with(['category', 'owner']);
 
-        if ($request->boolean('mine') && $request->user()) {
-            $query->ownedBy($request->user()->id);
-        } else {
-            $query->published();
-        }
-
-        if ($type = $request->query('type')) {
-            $query->ofType(ExchangeType::from($type));
-        }
-
-        if ($categoryId = $request->query('category_id')) {
-            $query->byCategory((int) $categoryId);
-        }
+        ExchangeableFilters::fromRequest($request)->apply($query);
 
         $skills = $query->search($request->query('q'))
             ->latest()
