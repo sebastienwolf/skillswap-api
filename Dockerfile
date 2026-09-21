@@ -45,12 +45,26 @@ COPY . .
 # artisan si besoin (voir docker/entrypoint.sh).
 RUN rm -f bootstrap/cache/*.php
 
-# Fichier d'environnement et base SQLite : générés une seule fois, à la
-# construction de l'image ; le script d'entrée (voir docker/entrypoint.sh)
-# se charge de la clé d'application et des migrations au démarrage du
-# conteneur, pas ici (une image ne doit pas contenir de secret généré).
 RUN cp -n .env.example .env \
     && touch database/database.sqlite
+
+# Données de démonstration générées dès le build, pour que l'application ait
+# des données prêtes dès le premier `docker compose up` (pas seulement après
+# le premier démarrage du conteneur) : SQLite étant un fichier, il fait
+# partie de la couche d'image et sera repris tel quel par Docker au moment où
+# le volume nommé "skillswap-database" (cf. docker-compose.yml) sera créé et
+# initialisé à partir du contenu de l'image.
+#
+# Une clé d'application temporaire est nécessaire pour exécuter `artisan`
+# (aucune commande ne fonctionne sans elle), mais elle est effacée aussitôt
+# après : une image ne doit jamais contenir de secret généré. Le script
+# d'entrée (voir docker/entrypoint.sh) en génère une vraie, propre à chaque
+# conteneur, à son tout premier démarrage — sans invalider les données
+# ci-dessus, qui ne dépendent pas de cette clé (mots de passe hashés en
+# bcrypt, aucune colonne chiffrée dans ce jeu de données).
+RUN php artisan key:generate --force \
+    && php artisan migrate --seed --force \
+    && sed -i 's/^APP_KEY=.*/APP_KEY=/' .env
 
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
